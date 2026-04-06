@@ -12,7 +12,7 @@ This repository is a git-backed home for local model servers, helper scripts, an
 - Root status and bulk stop scripts.
   - `~/Models/status_check_all_models.sh` reports the status of all known models.
   - `~/Models/stop_all_models.sh` stops all known models by calling the existing per-model stop scripts.
-  - Update these scripts whenever a new model is added.
+  - Update these scripts whenever a new model is added, renamed, removed, or moved.
 - Model payloads stay out of git.
   - Large weights, caches, pid files, and logs are ignored.
   - Git should track structure, scripts, and docs only.
@@ -26,6 +26,22 @@ This repository is a git-backed home for local model servers, helper scripts, an
 
 - `mlx/` for MLX-served models
 - `gguf/` for GGUF models served with `llama.cpp`
+- If we add another runtime family later, add it here and update the status and stop scripts to include it.
+
+## Required updates when model layout changes
+
+Whenever a new model folder is added anywhere under `~/Models`, make sure all of these stay in sync:
+
+1. `status_check_all_models.sh`
+   - add the new model to the status output
+2. `stop_all_models.sh`
+   - add the new model’s stop command so bulk shutdown still works
+3. `AGENTS.md`
+   - document the new folder and any new runtime family rules
+4. `README.md`
+   - keep the public-facing layout and setup notes accurate
+
+This applies to the existing `mlx/` and `gguf/` families, and to any future family we add later.
 
 Current examples:
 - `~/Models/mlx/qwen3.5/Qwen3.5-0.8B/`
@@ -35,7 +51,7 @@ Current examples:
 ## Repo files that should remain tracked
 
 - `README.md`
-- `agents.md`
+- `AGENTS.md`
 - `status_check_all_models.sh`
 - `stop_all_models.sh`
 - `mlx/**/start.sh`
