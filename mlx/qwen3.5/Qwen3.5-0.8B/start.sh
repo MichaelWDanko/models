@@ -3,11 +3,16 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MODEL_DIR="$SCRIPT_DIR"
-PYTHON="/Users/michaeldanko/.hermes/venvs/qwen-mlx311/bin/python"
+PYTHON_BIN="${PYTHON_BIN:-python3}"
 HOST="127.0.0.1"
 PORT="8080"
 PID_FILE="$SCRIPT_DIR/.qwen3.5-server.pid"
 LOG_FILE="$SCRIPT_DIR/qwen3.5-server.log"
+
+if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
+  echo "Python not found: $PYTHON_BIN" >&2
+  exit 1
+fi
 
 if [[ ! -d "$MODEL_DIR" ]]; then
   echo "Model directory not found: $MODEL_DIR" >&2
@@ -23,7 +28,7 @@ if [[ -f "$PID_FILE" ]]; then
   rm -f "$PID_FILE"
 fi
 
-nohup "$PYTHON" -m mlx_lm.server \
+nohup "$PYTHON_BIN" -m mlx_lm.server \
   --model "$MODEL_DIR" \
   --host "$HOST" \
   --port "$PORT" \

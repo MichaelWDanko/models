@@ -3,14 +3,19 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MODEL_FILE="$SCRIPT_DIR/gemma-4-26B-A4B-it-Q4_K_M.gguf"
-LLAMA_SERVER="/opt/homebrew/bin/llama-server"
+LLAMA_SERVER_BIN="${LLAMA_SERVER_BIN:-$(command -v llama-server || true)}"
 HOST="127.0.0.1"
 PORT="8082"
 PID_FILE="$SCRIPT_DIR/.gemma-4-26b-a4b.pid"
 LOG_FILE="$SCRIPT_DIR/gemma-4-26b-a4b.log"
 
-if [[ ! -x "$LLAMA_SERVER" ]]; then
-  echo "llama-server not found or not executable: $LLAMA_SERVER" >&2
+if [[ -z "$LLAMA_SERVER_BIN" ]]; then
+  echo "llama-server not found in PATH" >&2
+  exit 1
+fi
+
+if [[ ! -x "$LLAMA_SERVER_BIN" ]]; then
+  echo "llama-server not found or not executable: $LLAMA_SERVER_BIN" >&2
   exit 1
 fi
 
@@ -28,7 +33,7 @@ if [[ -f "$PID_FILE" ]]; then
   rm -f "$PID_FILE"
 fi
 
-nohup "$LLAMA_SERVER" \
+nohup "$LLAMA_SERVER_BIN" \
   -m "$MODEL_FILE" \
   --host "$HOST" \
   --port "$PORT" \

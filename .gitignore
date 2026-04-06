@@ -21,8 +21,11 @@
 **/vocab.json
 **/LICENSE
 **/README.md
+**/.gitattributes
+**/.gitignore
 
 # Keep the repo's docs and scripts trackable
+!/README.md
 !agents.md
 !Get Started.md
 !**/start.sh
