@@ -1,78 +1,71 @@
-# Models folder guide
+# Agents guide for this repo
 
-`~/Models` is a git-backed project for local model storage, per-model server scripts, and lightweight documentation.
+This repository is a git-backed home for local model servers, helper scripts, and a small amount of documentation. Keep it safe to publish publicly.
 
-The goal is to make it easy to:
-- back up the folder
-- copy the structure to another computer
-- keep the large model payloads out of git
-- keep start and stop scripts consistent
+## Core patterns
 
-## Canonical layout
-
-- `~/Models/mlx/`
-  - MLX family folders live here
-  - Example: `~/Models/mlx/qwen3.5/Qwen3.5-0.8B/`
-- `~/Models/gguf/`
-  - GGUF family folders live here
+- One model per folder.
+  - Each model lives in its own subfolder inside the family folder.
   - Example: `~/Models/gguf/gemma4/gemma-4-e4b-it-Q4_K_M/`
+- Stable script names.
+  - Every model folder uses `start.sh` and `stop.sh`.
+- Model payloads stay out of git.
+  - Large weights, caches, pid files, and logs are ignored.
+  - Git should track structure, scripts, and docs only.
+- Running a model means running its local server.
+  - The scripts start and stop the server process for that model.
+- Use the matching Hermes profile.
+  - Keep the profile `base_url` pointed at the right localhost port.
+  - Keep the profile model name aligned with the serving model.
 
-## Per-model folder convention
+## Current layout
 
-Each specific model gets its own folder inside the family folder.
+- `mlx/` for MLX-served models
+- `gguf/` for GGUF models served with `llama.cpp`
 
-Examples:
+Current examples:
 - `~/Models/mlx/qwen3.5/Qwen3.5-0.8B/`
 - `~/Models/gguf/gemma4/gemma-4-e4b-it-Q4_K_M/`
 - `~/Models/gguf/gemma4/gemma-4-26B-A4B-it-Q4_K_M/`
 
-Inside each model folder:
-- `start.sh`
-- `stop.sh`
-- the model files themselves
-- optional runtime state like logs or pid files, which should be gitignored
+## Repo files that should remain tracked
 
-## Rules
+- `README.md`
+- `agents.md`
+- `mlx/**/start.sh`
+- `mlx/**/stop.sh`
+- `gguf/**/start.sh`
+- `gguf/**/stop.sh`
 
-1. Keep one canonical home for each model.
-   - Do not duplicate the same model tree in multiple places.
-   - If a model changes runtime or format, move the active copy instead of keeping both.
+## Files that should stay untracked
 
-2. Keep the script names stable.
-   - Every model folder should use the same filenames: `start.sh` and `stop.sh`.
-   - That makes the layout predictable across computers.
+- model weights and tokenizer files
+- `.cache/`
+- `*.log`
+- `*.pid`
+- generated metadata like `.gitattributes` inside model downloads
 
-3. Keep model payloads out of git.
-   - Large weights, tokenizer files, cached downloads, logs, and pid files should be ignored.
-   - The repo should mostly track structure, scripts, and documentation.
+## Commit pattern
 
-4. Use Hermes profile configs to point at the active server.
-   - Keep the profile `base_url` aligned with the local OpenAI-compatible endpoint.
-   - Keep the profile model name aligned with the active model.
+Use conventional commits for this repo.
 
-5. Update this guide when the layout changes.
-   - Add new model families here.
-   - Add any new conventions or helper files here.
+Format:
+`type(scope): short summary`
 
-## Current active models
+Examples:
+- `docs(models): add repo guide`
+- `chore(models): remove unused model files`
+- `feat(models): add start and stop scripts`
 
-- Qwen 3.5 local MLX server
-  - Model folder: `~/Models/mlx/qwen3.5/Qwen3.5-0.8B/`
-  - Server port: `8080`
-  - Scripts: `~/Models/mlx/qwen3.5/Qwen3.5-0.8B/start.sh`, `~/Models/mlx/qwen3.5/Qwen3.5-0.8B/stop.sh`
+Guidelines:
+- keep the subject short and direct
+- use lowercase types
+- prefer `docs`, `chore`, `feat`, `fix`, `refactor`, or `test`
+- if the change only updates docs or structure, use `docs` or `chore`
 
-- Gemma 4 E4B GGUF server
-  - Model folder: `~/Models/gguf/gemma4/gemma-4-e4b-it-Q4_K_M/`
-  - Server port: `8081`
-  - Scripts: `~/Models/gguf/gemma4/gemma-4-e4b-it-Q4_K_M/start.sh`, `~/Models/gguf/gemma4/gemma-4-e4b-it-Q4_K_M/stop.sh`
+## When updating the repo
 
-- Gemma 4 26B A4B GGUF server
-  - Model folder: `~/Models/gguf/gemma4/gemma-4-26B-A4B-it-Q4_K_M/`
-  - Server port: `8082`
-  - Scripts: `~/Models/gguf/gemma4/gemma-4-26B-A4B-it-Q4_K_M/start.sh`, `~/Models/gguf/gemma4/gemma-4-26B-A4B-it-Q4_K_M/stop.sh`
-
-## Git notes
-
-- Root `.gitignore` should exclude model artifacts and runtime state.
-- The repo should retain the folder structure, scripts, and documentation.
-- If you add a new model folder, give it the same `start.sh` and `stop.sh` pair and then add the model artifacts to the ignored set.
+1. Keep the repo public-safe.
+2. Keep model-specific changes inside that model’s folder.
+3. Update the README and this guide if the layout changes.
+4. Commit the change with a conventional commit message.
