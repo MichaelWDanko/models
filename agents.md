@@ -10,7 +10,7 @@ This repository is a git-backed home for local model servers, helper scripts, an
 - Stable script names.
   - Every model folder uses `start.sh` and `stop.sh`.
 - Root status and bulk stop scripts.
-  - `~/Models/check_all_models_status.sh` reports the status of all known models.
+  - `~/Models/status_check_all_models.sh` reports the status of all known models.
   - `~/Models/stop_all_models.sh` stops all known models by calling the existing per-model stop scripts.
   - Update these scripts whenever a new model is added.
 - Model payloads stay out of git.
@@ -36,7 +36,7 @@ Current examples:
 
 - `README.md`
 - `agents.md`
-- `check_all_models_status.sh`
+- `status_check_all_models.sh`
 - `stop_all_models.sh`
 - `mlx/**/start.sh`
 - `mlx/**/stop.sh`

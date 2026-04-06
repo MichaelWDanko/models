@@ -13,7 +13,7 @@ When I say a model is “running,” I mean the local server process serving tha
   - `start.sh`
   - `stop.sh`
 - the repo root has helper scripts:
-  - `check_all_models_status.sh`
+  - `status_check_all_models.sh`
   - `stop_all_models.sh`
 
 ## Getting this onto another computer
