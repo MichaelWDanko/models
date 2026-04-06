@@ -1,0 +1,29 @@
+# Ignore runtime state
+**/.cache/
+**/*.log
+**/*.pid
+**/.DS_Store
+
+# Ignore model payloads and generated model metadata
+**/*.gguf
+**/*.safetensors
+**/*.safetensors.index.json
+**/config.json
+**/tokenizer.json
+**/tokenizer_config.json
+**/generation_config.json
+**/chat_template.jinja
+**/preprocessor_config.json
+**/video_preprocessor_config.json
+**/model.safetensors
+**/model-*.safetensors
+**/merges.txt
+**/vocab.json
+**/LICENSE
+**/README.md
+
+# Keep the repo's docs and scripts trackable
+!agents.md
+!Get Started.md
+!**/start.sh
+!**/stop.sh
