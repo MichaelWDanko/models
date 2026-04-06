@@ -9,9 +9,10 @@ This repository is a git-backed home for local model servers, helper scripts, an
   - Example: `~/Models/gguf/gemma4/gemma-4-e4b-it-Q4_K_M/`
 - Stable script names.
   - Every model folder uses `start.sh` and `stop.sh`.
-- Root status script.
-  - `~/Models/status.sh` reports the status of all known models.
-  - Update it whenever a new model is added.
+- Root status and bulk stop scripts.
+  - `~/Models/check_all_models_status.sh` reports the status of all known models.
+  - `~/Models/stop_all_models.sh` stops all known models by calling the existing per-model stop scripts.
+  - Update these scripts whenever a new model is added.
 - Model payloads stay out of git.
   - Large weights, caches, pid files, and logs are ignored.
   - Git should track structure, scripts, and docs only.
@@ -35,6 +36,8 @@ Current examples:
 
 - `README.md`
 - `agents.md`
+- `check_all_models_status.sh`
+- `stop_all_models.sh`
 - `mlx/**/start.sh`
 - `mlx/**/stop.sh`
 - `gguf/**/start.sh`
