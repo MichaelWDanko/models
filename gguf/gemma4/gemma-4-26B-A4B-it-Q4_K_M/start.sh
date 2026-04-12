@@ -8,6 +8,47 @@ HOST="127.0.0.1"
 PORT="8082"
 PID_FILE="$SCRIPT_DIR/.gemma-4-26b-a4b.pid"
 LOG_FILE="$SCRIPT_DIR/gemma-4-26b-a4b.log"
+LLAMA_CTX_SIZE="${LLAMA_CTX_SIZE:-262144}"
+LLAMA_BATCH_SIZE="${LLAMA_BATCH_SIZE:-2048}"
+LLAMA_UBATCH_SIZE="${LLAMA_UBATCH_SIZE:-512}"
+LLAMA_REASONING="${LLAMA_REASONING:-on}"
+LLAMA_PERF="${LLAMA_PERF:-on}"
+LLAMA_METRICS="${LLAMA_METRICS:-on}"
+LLAMA_LOG_TIMESTAMPS="${LLAMA_LOG_TIMESTAMPS:-on}"
+LLAMA_LOG_PREFIX="${LLAMA_LOG_PREFIX:-on}"
+
+LLAMA_EXTRA_FLAGS=()
+if [[ "$LLAMA_PERF" == "on" ]]; then
+  LLAMA_EXTRA_FLAGS+=(--perf)
+fi
+if [[ "$LLAMA_METRICS" == "on" ]]; then
+  LLAMA_EXTRA_FLAGS+=(--metrics)
+fi
+if [[ "$LLAMA_LOG_TIMESTAMPS" == "on" ]]; then
+  LLAMA_EXTRA_FLAGS+=(--log-timestamps)
+fi
+if [[ "$LLAMA_LOG_PREFIX" == "on" ]]; then
+  LLAMA_EXTRA_FLAGS+=(--log-prefix)
+fi
+
+log_config() {
+  {
+    echo "Starting gemma-4-26b-a4b with:"
+    echo "  model: $MODEL_FILE"
+    echo "  server: $LLAMA_SERVER_BIN"
+    echo "  host: $HOST"
+    echo "  port: $PORT"
+    echo "  ctx-size: $LLAMA_CTX_SIZE"
+    echo "  batch-size: $LLAMA_BATCH_SIZE"
+    echo "  ubatch-size: $LLAMA_UBATCH_SIZE"
+    echo "  reasoning: $LLAMA_REASONING"
+    echo "  perf: $LLAMA_PERF"
+    echo "  metrics: $LLAMA_METRICS"
+    echo "  log-timestamps: $LLAMA_LOG_TIMESTAMPS"
+    echo "  log-prefix: $LLAMA_LOG_PREFIX"
+    echo "  log: $LOG_FILE"
+  } | tee -a "$LOG_FILE"
+}
 
 if [[ -z "$LLAMA_SERVER_BIN" ]]; then
   echo "llama-server not found in PATH" >&2
@@ -33,11 +74,18 @@ if [[ -f "$PID_FILE" ]]; then
   rm -f "$PID_FILE"
 fi
 
+log_config
+
 nohup "$LLAMA_SERVER_BIN" \
   -m "$MODEL_FILE" \
   --host "$HOST" \
   --port "$PORT" \
-  >"$LOG_FILE" 2>&1 &
+  --ctx-size "$LLAMA_CTX_SIZE" \
+  --batch-size "$LLAMA_BATCH_SIZE" \
+  --ubatch-size "$LLAMA_UBATCH_SIZE" \
+  --reasoning "$LLAMA_REASONING" \
+  "${LLAMA_EXTRA_FLAGS[@]}" \
+  >>"$LOG_FILE" 2>&1 &
 
 server_pid="$!"
 echo "$server_pid" > "$PID_FILE"

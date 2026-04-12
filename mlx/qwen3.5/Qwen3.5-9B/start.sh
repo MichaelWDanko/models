@@ -4,9 +4,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MODEL_DIR="$SCRIPT_DIR"
 HOST="127.0.0.1"
-PORT="8080"
-PID_FILE="$SCRIPT_DIR/.qwen3.5-server.pid"
-LOG_FILE="$SCRIPT_DIR/qwen3.5-server.log"
+PORT="8085"
+PID_FILE="$SCRIPT_DIR/.qwen3.5-9b-server.pid"
+LOG_FILE="$SCRIPT_DIR/qwen3.5-9b-server.log"
 EXPECTED_CONTEXT_LENGTH="${EXPECTED_CONTEXT_LENGTH:-262144}"
 
 PYTHON_CANDIDATES=(
@@ -46,17 +46,23 @@ if [[ ! -d "$MODEL_DIR" ]]; then
   exit 1
 fi
 
+if [[ ! -f "$MODEL_DIR/config.json" ]]; then
+  echo "Model files are missing from $MODEL_DIR." >&2
+  echo "Download the MLX model snapshot first for mlx-community/Qwen3.5-9B-MLX-4bit." >&2
+  exit 1
+fi
+
 if [[ -f "$PID_FILE" ]]; then
   existing_pid="$(cat "$PID_FILE" 2>/dev/null || true)"
   if [[ -n "${existing_pid:-}" ]] && kill -0 "$existing_pid" 2>/dev/null; then
-    echo "qwen3.5 server is already running (PID $existing_pid)"
+    echo "qwen3.5-9b server is already running (PID $existing_pid)"
     exit 0
   fi
   rm -f "$PID_FILE"
 fi
 
 {
-  echo "Starting qwen3.5 MLX server with:"
+  echo "Starting qwen3.5-9b MLX server with:"
   echo "  model dir:  $MODEL_DIR"
   echo "  python:     $PYTHON_BIN"
   echo "  host:       $HOST"
@@ -76,12 +82,12 @@ echo "$server_pid" > "$PID_FILE"
 
 for _ in {1..30}; do
   if curl -sf "http://$HOST:$PORT/v1/models" >/dev/null 2>&1; then
-    echo "Started qwen3.5 server on http://$HOST:$PORT (PID $server_pid)"
+    echo "Started qwen3.5-9b server on http://$HOST:$PORT (PID $server_pid)"
     exit 0
   fi
 
   if ! kill -0 "$server_pid" 2>/dev/null; then
-    echo "qwen3.5 server exited early. See $LOG_FILE" >&2
+    echo "qwen3.5-9b server exited early. See $LOG_FILE" >&2
     rm -f "$PID_FILE"
     exit 1
   fi
@@ -89,5 +95,5 @@ for _ in {1..30}; do
   sleep 1
 done
 
-echo "qwen3.5 server is still starting. Check $LOG_FILE" >&2
+echo "qwen3.5-9b server is still starting. Check $LOG_FILE" >&2
 exit 0

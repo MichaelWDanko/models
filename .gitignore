@@ -12,6 +12,7 @@
 **/tokenizer.json
 **/tokenizer_config.json
 **/generation_config.json
+**/processor_config.json
 **/chat_template.jinja
 **/preprocessor_config.json
 **/video_preprocessor_config.json

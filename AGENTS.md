@@ -21,12 +21,17 @@ This repository is a git-backed home for local model servers, helper scripts, an
 - Use the matching Hermes profile.
   - Keep the profile `base_url` pointed at the right localhost port.
   - Keep the profile model name aligned with the serving model.
+- Keep runtime context explicit where possible.
+  - For llama.cpp models, set `--ctx-size` in the start script.
+  - For MLX models, record the intended context explicitly in the script and keep the Hermes profile `context_length` aligned with it.
 
 ## Current layout
 
 - `mlx/` for MLX-served models
 - `gguf/` for GGUF models served with `llama.cpp`
 - If we add another runtime family later, add it here and update the status and stop scripts to include it.
+- Gemma 4 has MLX experiment paths for E4B-it and 26B-A4B plus GGUF paths.
+- Qwen 3.5 now has separate MLX folders for `Qwen3.5-0.8B` and `Qwen3.5-9B`.
 
 ## Required updates when model layout changes
 
@@ -45,6 +50,9 @@ This applies to the existing `mlx/` and `gguf/` families, and to any future fami
 
 Current examples:
 - `~/Models/mlx/qwen3.5/Qwen3.5-0.8B/`
+- `~/Models/mlx/qwen3.5/Qwen3.5-9B/`
+- `~/Models/mlx/gemma4/gemma-4-e4b-it-4bit/`
+- `~/Models/mlx/gemma4/gemma-4-26b-a4b-it-4bit/`
 - `~/Models/gguf/gemma4/gemma-4-e4b-it-Q4_K_M/`
 - `~/Models/gguf/gemma4/gemma-4-26B-A4B-it-Q4_K_M/`
 
